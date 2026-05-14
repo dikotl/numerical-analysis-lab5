@@ -29,6 +29,7 @@ main :: proc() {
 	fmt.printf("Interval: [%.2f, %.2f] (0 to 5*pi)\n", a, b)
 	fmt.printf("Number of subintervals (n): %d\n\n", n)
 	fmt.printf("Calculated value: %f\n", result)
+	fmt.printf("Midpoint value:   %f\n", 1.0 / (b - a) * result)
 }
 
 
@@ -46,14 +47,8 @@ simpson38 :: proc(f: Integrand, a: f64, b: f64, n: uint) -> f64 {
 	sum := f(a) + f(b)
 
 	for i in 1 ..< n {
-		t_i := a + f64(i) * h
-
-		// Every third node is multiplied by 2, all other internal nodes by 3
-		if i % 3 == 0 {
-			sum += 2.0 * f(t_i)
-		} else {
-			sum += 3.0 * f(t_i)
-		}
+		// Every third node is multiplied by 2, all other nodes by 3.
+		sum += f(a + f64(i) * h) * (2.0 if i % 3 == 0 else 3.0)
 	}
 
 	return (3.0 * h / 8.0) * sum
